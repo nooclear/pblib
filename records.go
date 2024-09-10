@@ -2,16 +2,27 @@ package pblib
 
 import (
 	"bytes"
-	"fmt"
+    "encoding/json"
+    "fmt"
 )
 
-// GetRecord filter = (email="user@example.com" && other="")
-func (p *PocketBase) GetRecord(collection, filter string) ([]byte, error) {
+type RecordsArgs struct {
+	Page int
+	PerPage int
+	Sort string
+}
+
+// GetRecord filter = email="user@example.com"
+func (p *PocketBase) GetRecord(collection, filter string, args RecordsArgs) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records", p.Addr, collection)
 	if filter != "" {
 		query += fmt.Sprintf(`/?filter=(%s)`, filter)
 	}
-	res, err := request("GET", query, nil)
+	arg, err := json.Marshal(args)
+	if err != nil {
+		return nil, err
+	}
+	res, err := request("GET", query, bytes.NewBuffer(arg))
 	return res, err
 }
 
