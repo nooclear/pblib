@@ -1,4 +1,4 @@
-package pocketbase
+package pblib
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 func (p *PocketBase) GetRecord(collection, filter string) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records", p.Addr, collection)
 	if filter != "" {
-		query += `/?filter=` + filter
+		query += fmt.Sprintf(`/?filter=(%s)`, filter)
 	}
 	res, err := request("GET", query, nil)
 	return res, err
@@ -37,4 +37,4 @@ func (p *PocketBase) DeleteRecord(collection, recordId string) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records/%s", p.Addr, collection, recordId)
 	res, err := request("DELETE", query, nil)
 	return res, err
-} //TODO
+}

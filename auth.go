@@ -1,4 +1,4 @@
-package pocketbase
+package pblib
 
 import (
 	"bytes"
@@ -7,6 +7,17 @@ import (
 )
 
 var Bearer string
+
+type AuthRes struct {
+	Admin struct {
+		ID      string `json:"id"`
+		Created string `json:"created"`
+		Updated string `json:"updated"`
+		Avatar  int    `json:"avatar"`
+		Email   string `json:"email"`
+	} `json:"admin"`
+	Token string `json:"token"`
+}
 
 func (p *PocketBase) AuthWithPass(email, pass string) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/admins/auth-with-password", p.Addr)
@@ -26,18 +37,9 @@ func (p *PocketBase) AuthWithPass(email, pass string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	res := struct {
-		Admin struct {
-			ID      string `json:"id"`
-			Created string `json:"created"`
-			Updated string `json:"updated"`
-			Avatar  int    `json:"avatar"`
-			Email   string `json:"email"`
-		} `json:"admin"`
-		Token string `json:"token"`
-	}{}
+	authRes := AuthRes{}
 
-	err = json.Unmarshal(data, &res)
+	err = json.Unmarshal(data, &authRes)
 	if err != nil {
 		return nil, err
 	}
@@ -51,21 +53,12 @@ func (p *PocketBase) AuthRefresh() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	res := struct {
-		Admin struct {
-			ID      string `json:"id"`
-			Created string `json:"created"`
-			Updated string `json:"updated"`
-			Avatar  int    `json:"avatar"`
-			Email   string `json:"email"`
-		} `json:"admin"`
-		Token string `json:"token"`
-	}{}
+	authRes := AuthRes{}
 
-	if err := json.Unmarshal(data, &res); err != nil {
+	if err := json.Unmarshal(data, &authRes); err != nil {
 		return nil, err
 	}
 
-	Bearer = res.Token
+	Bearer = authRes.Token
 	return data, nil
 }
