@@ -43,6 +43,7 @@ func (p *PocketBase) AuthWithPass(email, pass string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	Bearer = authRes.Token
 
 	return data, nil
 }
