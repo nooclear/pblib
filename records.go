@@ -14,7 +14,7 @@ type RecordsArgs struct {
 
 func (p *PocketBase) GetRecord(collection string, args RecordsArgs) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records", p.Addr, collection)
-	q := fmt.Sprintf("/?page=%d&perpage=%d&sort=%s&filter=(%s)", args.Page, args.PerPage, args.Sort, args.Filter)
+	q := fmt.Sprintf("/?page=%d&perPage=%d&sort=%s&filter=(%s)", args.Page, args.PerPage, args.Sort, args.Filter)
 	query += q
 
 /*
