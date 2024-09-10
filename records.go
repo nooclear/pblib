@@ -5,28 +5,12 @@ import (
     "fmt"
 )
 
-type RecordsArgs struct {
-	Page int
-	PerPage int
-	Sort string
-	Filter string
-}
 
-func (p *PocketBase) GetRecord(collection string, args RecordsArgs) ([]byte, error) {
+func (p *PocketBase) GetRecord(collection, args string) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records", p.Addr, collection)
-	q := fmt.Sprintf("/?page=%d&perPage=%d&sort=%s&filter=(%s)", args.Page, args.PerPage, args.Sort, args.Filter)
-	query += q
-
-/*
-	if args.Page != 0 {
-		query += `/?page=`+ strconv.Itoa(args.Page)
+	if args != "" {
+		query += fmt.Sprintf("/?" + args)
 	}
-
-	if filter != "" {
-		query += fmt.Sprintf(`/?filter=(%s)`, filter)
-	}
-*/
-
 	res, err := request("GET", query, nil)
 	return res, err
 } // working on args/filter
