@@ -45,11 +45,11 @@ func (p *PocketBase) AuthWithPass(email, pass string) ([]byte, error) {
 	return data, nil
 }
 
-func (p *PocketBase) AuthRefresh() ([]byte, bool, error) {
+func (p *PocketBase) AuthRefresh() ([]byte, error) {
 	query := fmt.Sprintf(`%s/api/admins/auth-refresh`, p.Addr)
 	data, err := request("POST", query, nil)
 	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 	res := struct {
 		Admin struct {
@@ -63,10 +63,9 @@ func (p *PocketBase) AuthRefresh() ([]byte, bool, error) {
 	}{}
 
 	if err := json.Unmarshal(data, &res); err != nil {
-		return nil, false, err
+		return nil, err
 	}
 
-	// Time format time.Now().UTC().Format("2006-01-02 15:04:05.000Z")
 	Bearer = res.Token
-	return data, true, nil
+	return data, nil
 }
