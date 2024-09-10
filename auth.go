@@ -8,7 +8,7 @@ import (
 
 var Bearer string
 
-func (p *PocketBase) AuthWithPass(email, pass string) string {
+func (p *PocketBase) AuthWithPass(email, pass string) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/admins/auth-with-password", p.Addr)
 	id := struct {
 		Identity string `json:"identity"`
@@ -19,10 +19,13 @@ func (p *PocketBase) AuthWithPass(email, pass string) string {
 	}
 	idBytes, err := json.Marshal(id)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	data := request("POST", query, bytes.NewBuffer(idBytes))
+	data, err := request("POST", query, bytes.NewBuffer(idBytes))
+	if err != nil {
+		return nil, err
+	}
 	res := struct {
 		Admin struct {
 			ID      string `json:"id"`
@@ -36,15 +39,18 @@ func (p *PocketBase) AuthWithPass(email, pass string) string {
 
 	err = json.Unmarshal(data, &res)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return res.Token
+	return data, nil
 }
 
-func (p *PocketBase) AuthRefresh() bool {
+func (p *PocketBase) AuthRefresh() ([]byte, bool, error) {
 	query := fmt.Sprintf(`%s/api/admins/auth-refresh`, p.Addr)
-	data := request("POST", query, nil)
+	data, err := request("POST", query, nil)
+	if err != nil {
+		return nil, false, err
+	}
 	res := struct {
 		Admin struct {
 			ID      string `json:"id"`
@@ -57,9 +63,10 @@ func (p *PocketBase) AuthRefresh() bool {
 	}{}
 
 	if err := json.Unmarshal(data, &res); err != nil {
-		panic(err)
+		return nil, false, err
 	}
+
 	// Time format time.Now().UTC().Format("2006-01-02 15:04:05.000Z")
 	Bearer = res.Token
-	return true
+	return data, true, nil
 }

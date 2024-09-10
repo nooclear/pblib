@@ -1,7 +1,7 @@
 package pocketbase
 
 import (
-	"fmt"
+    "fmt"
 	"io"
 	"net/http"
 )
@@ -16,10 +16,10 @@ func NewPocketBase(addr string) *PocketBase {
 	}
 }
 
-func request(method, query string, reader io.Reader) []byte {
+func request(method, query string, reader io.Reader) ([]byte, error) {
 	req, err := http.NewRequest(method, query, reader)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", Bearer))
@@ -35,11 +35,11 @@ func request(method, query string, reader io.Reader) []byte {
 	}()
 	if res.StatusCode == http.StatusOK {
 		if data, err := io.ReadAll(res.Body); err != nil {
-			panic(err)
+			return nil, err
 		} else {
-			return data
+			return data, nil
 		}
 	} else {
-		panic(res.StatusCode)
+		return nil, err
 	}
 }
