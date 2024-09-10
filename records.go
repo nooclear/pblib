@@ -2,7 +2,6 @@ package pblib
 
 import (
 	"bytes"
-    "encoding/json"
     "fmt"
 )
 
@@ -10,21 +9,27 @@ type RecordsArgs struct {
 	Page int
 	PerPage int
 	Sort string
+	Filter string
 }
 
-// GetRecord filter = email="user@example.com"
 func (p *PocketBase) GetRecord(collection, filter string, args RecordsArgs) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records", p.Addr, collection)
+	q := fmt.Sprintf("/?page=%d&perpage=%d&sort=%s&filter=(%s)", args.Page, args.PerPage, args.Sort, args.Filter)
+	query += q
+
+/*
+	if args.Page != 0 {
+		query += `/?page=`+ strconv.Itoa(args.Page)
+	}
+
 	if filter != "" {
 		query += fmt.Sprintf(`/?filter=(%s)`, filter)
 	}
-	arg, err := json.Marshal(args)
-	if err != nil {
-		return nil, err
-	}
-	res, err := request("GET", query, bytes.NewBuffer(arg))
+*/
+
+	res, err := request("GET", query, nil)
 	return res, err
-}
+} // working on args/filter
 
 func (p *PocketBase) ViewRecord(collection, recordID string) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records/%s", p.Addr, collection, recordID)
