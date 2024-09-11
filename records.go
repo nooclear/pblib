@@ -5,7 +5,6 @@ import (
     "fmt"
 )
 
-
 func (p *PocketBase) GetRecord(collection, args string) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records", p.Addr, collection)
 	if args != "" {
