@@ -12,7 +12,7 @@ type RecordArgs struct {
 	Filter string
 }
 
-func (p *PocketBase) GetRecord(collection, args RecordArgs) ([]byte, error) {
+func (p *PocketBase) GetRecord(collection string, args RecordArgs) ([]byte, error) {
 	query := fmt.Sprintf("%s/api/collections/%s/records/?page=%d&perPage=%d", p.Addr, collection, args.Page, args.PerPage)
 	if args.Sort != "" {
 		query += "&sort="+args.Sort
